@@ -1,0 +1,13 @@
+declare bus INBUS(15:0), OUTBUS(7:0), NEWINPUT, NEWCODE;
+declare register INREG(15:0), CODE(15:0), AR(7:0), DR(7:0), ACCESS;
+declare memory MEM(AR,DR);
+
+    CODE<-$0815;
+WAIT:
+    if NEWINPUT=1 then INREG<-INBUS else goto WAIT fi;
+    if INREG=CODE then ACCESS<-1 else goto WAIT fi;
+WNEW:
+    if NEWINPUT=1 then AR<-INBUS(7:0) else goto WNEW fi;
+    read MEM;
+    OUTBUS<-DR, ACCESS<-0, INBUS<-0;
+    goto WAIT;

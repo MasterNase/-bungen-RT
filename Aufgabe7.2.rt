@@ -1,0 +1,17 @@
+declare bus INBUS(11:0), OUTBUS(6:0), INPUT,VALID;
+declare register INREG(11:0), AR(6:0);
+
+WAIT:
+    if VALID=1 then INREG<-INBUS else goto WAIT fi;
+
+    if INREG(11:8)>0 then AR<-INREG(11:8)+%0110000 else goto NEXTA fi; 
+    OUTBUS<-AR;
+
+NEXTA:
+    if INREG(7:4)>0 then AR<-INREG(7:4)+%0110000 else goto NEXTB fi; 
+    OUTBUS<-AR;
+
+NEXTB:
+    AR<-INREG(3:0)+%0110000; 
+    OUTBUS<-AR,INBUS<-0,VALID<-0;
+    goto WAIT;
