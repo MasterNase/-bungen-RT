@@ -1,0 +1,16 @@
+declare bus INBUS(11:0), OUTBUS(6:0), INPUT,VALID,READY;
+declare register INREG(11:0), DR(6:0);
+
+WAIT:
+    if VALID=1 then INREG<-INBUS else goto WAIT fi; #c0=Lade INBUS in register INREG,k0=wenn VALID =1 dann c0 sonst wait
+
+    DR<-INREG(11:8)+%0110000; #c1=Lade INREG(11:8) in DR
+    OUTBUS<-DR;               #c2=OUTBUS wird auf DR gesetzt
+
+    DR<-INREG(7:4)+%0110000; #c3=Lade INREG(7:4) in DR
+    OUTBUS<-DR;              #c2
+
+    DR<-INREG(3:0)+%0110000; #c4=Lade INREG(3:0) in DR
+    OUTBUS<-DR,READY<-1;     #c2,c5=Setze READY auf 1
+    
+    goto WAIT;

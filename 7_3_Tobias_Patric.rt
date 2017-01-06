@@ -1,0 +1,23 @@
+declare bus OUTBUS(15:0),MINBIGA,AREQ31;
+declare register AR(5:0),DR(15:0),MIN(15:0),A(15:0),MINADR(5:0);
+declare memory MEM(AR,DR);
+
+    MIN<-%1111111111111111; #c0
+
+REPEAT:
+    read MEM;               #c1
+    A<-DR;                  #c2
+    if MIN>A                #k0
+    then MINBIGA<-1,        
+         MINADR<-AR,        #c4
+         MIN<-A             #c5
+     fi;     
+    
+    if AR = 31              
+    then AREQ31<-1          #c6
+    else AR<-AR+1,          #c7
+         goto REPEAT 
+    fi;
+
+    OUTBUS<-MIN;
+    
